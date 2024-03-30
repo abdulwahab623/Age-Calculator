@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Age Calculator</title>
+  <style>
+  .calculator-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+  background-color: #f2f2f2; 
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.form {
+  width: 80%; 
+  max-width: 500px;
+  padding: 20px;
+  background-color: #d3d3d3; 
+  border-radius: 8px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form h2 {
+  text-align: center; 
+  margin-bottom: 20px; 
+}
+
+.form p {
+  text-align: center; 
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block; 
+  margin-bottom: 5px; 
+}
+
+.form-control {
+  width: calc(100% - 10px); 
+  padding: 8px; 
+  margin-bottom: 10px; 
+  border: 1px solid #ccc;
+  border-radius: 4px; 
+}
+  </style>
+  </head>
+  <body>
+    <section class="calculator-section">
+        <div class="row">
+            <h2 style="text-align: center;">Age and Birth Date Calculator</h2>
+            
+          <div class="col-sm-6 form">
+            <p>Please calculate my age in years, months, and days.</p>
+            <label for="birthDate" class="form-label">Birth date:</label>
+            <input type="text" class="form-control" id="birthDate" placeholder="DD/MM/YYYY" oninput="calculateAge()"><br><br>
+          </div>
+          <div class="col-sm-8 form">
+            <h3>Age:</h3>
+            <label for="ageYears" class="form-label">Year:</label>
+        <input type="number" class="form-control" id="ageYears" placeholder="Years" min="0" oninput="calculateBirthDate()">
+        <label for="ageYears" class="form-label">Months:</label>
+        <input type="number" class="form-control" id="ageMonths" placeholder="Months" min="1" max="12" oninput="calculateBirthDate()">
+        <label for="ageYears" class="form-label">Days:</label>
+        <input type="number" class="form-control" id="ageDays" placeholder="Days" min="1" max="31" oninput="calculateBirthDate()">
+          </div>
+        </div>
+      </section>
+   
+  </body>
+ <script>
+
+function calculateAge() {
+        var birthDateString = document.getElementById("birthDate").value;
+        var parts = birthDateString.split('/');
+        var birthDay = parseInt(parts[0], 10);
+        var birthMonth = parseInt(parts[1], 10);
+        var birthYear = parseInt(parts[2], 10);
+
+        var currentDate = new Date();
+        var currentYear = currentDate.getFullYear();
+        var currentMonth = currentDate.getMonth() + 1;
+        var currentDay = currentDate.getDate();
+
+        var ageYear = currentYear - birthYear;
+        var ageMonth = currentMonth - birthMonth;
+        var ageDay = currentDay - birthDay;
+
+        if (ageMonth < 0 || (ageMonth === 0 && ageDay < 0)) {
+            ageYear--;
+            ageMonth = (12 - birthMonth) + currentMonth;
+            if (currentDay < birthDay) {
+                ageMonth--;
+            }
+        }
+
+        if (ageDay < 1 || ageDay > 31) {
+            var tempDate = new Date(currentYear, currentMonth - 1, 0);
+            ageDay = tempDate.getDate() + ageDay;
+        }
+
+        document.getElementById("ageYears").value = ageYear;
+        document.getElementById("ageMonths").value = ageMonth;
+        document.getElementById("ageDays").value = ageDay;
+    }
+
+    function calculateBirthDate() {
+        let ageYearsInput = parseInt(document.getElementById("ageYears").value) || 0;
+        let ageMonthsInput = parseInt(document.getElementById("ageMonths").value) || 0;
+        let ageDaysInput = parseInt(document.getElementById("ageDays").value) || 0;
+        if (ageDaysInput > 31) {
+           
+            document.getElementById("birthDate").value = "";
+            document.getElementById("ageDays").value = "";
+            return;
+        }
+
+        if (ageMonthsInput > 12) {
+          
+            document.getElementById("birthDate").value = "";
+            document.getElementById("ageMonths").value = "";
+            return;
+        }
+
+        let currentDate = new Date();
+        let currentYear = currentDate.getFullYear();
+        let currentMonth = currentDate.getMonth() + 1;
+        let currentDay = currentDate.getDate();
+
+        let birthYear = currentYear - ageYearsInput;
+        let birthMonth = currentMonth - ageMonthsInput;
+        let birthDay = currentDay - ageDaysInput;
+
+        if (birthDay < 1) {
+            birthMonth--;
+            if (birthMonth < 1) {
+                birthYear--;
+                birthMonth = 12; 
+            }       
+            let tempDate = new Date(birthYear, birthMonth, 0);
+            birthDay = tempDate.getDate() + birthDay;
+        }
+
+        let birthDate = (birthDay < 10 ? '0' : '') + birthDay + "/" + (birthMonth < 10 ? '0' : '') + birthMonth + "/" + birthYear;
+        document.getElementById("birthDate").value = birthDate;
+    }
+</script>
+</html>
